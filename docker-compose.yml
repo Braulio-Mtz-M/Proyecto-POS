@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # 1. Tu Base de Datos (La M de MERN)
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # 2. Tu API (La E y N de MERN)
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://db:27017/pos_db
+    depends_on:
+      - db
+
+  # 3. Tu Interfaz (La R de MERN)
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+# Volumen para que los datos de MongoDB no se borren si apagas el contenedor
+volumes:
+  mongo_data:
